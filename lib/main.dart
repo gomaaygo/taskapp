@@ -23,12 +23,12 @@ class MyApp extends StatelessWidget {
         ),
         body: ListView(
           children: [
-            Task('Aprendendo Flutter'),
-            Task('Andar de Bike'),
-            Task('Meditar'),
-            Task('Estudar'),
-            Task('Jogar videogame'),
-            Task('Desenhar')
+            Task('Aprendendo Flutter', 'https://pbs.twimg.com/media/Eu7m692XIAEvxxP?format=png&name=large', 1),
+            Task('Andar de Bike', 'https://pbs.twimg.com/media/Eu7m692XIAEvxxP?format=png&name=large', 2),
+            Task('Meditar', 'https://pbs.twimg.com/media/Eu7m692XIAEvxxP?format=png&name=large', 3),
+            Task('Estudar', 'https://pbs.twimg.com/media/Eu7m692XIAEvxxP?format=png&name=large', 4),
+            Task('Jogar videogame', 'https://pbs.twimg.com/media/Eu7m692XIAEvxxP?format=png&name=large', 5),
+            Task('Desenhar', 'https://pbs.twimg.com/media/Eu7m692XIAEvxxP?format=png&name=large', 1)
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -43,14 +43,16 @@ class MyApp extends StatelessWidget {
 
 class Task extends StatefulWidget {
   final String name;
-  const Task(this.name, {super.key});
+  final String photo;
+  final int difficulty;
+  const Task(this.name, this.photo, this.difficulty, {super.key});
 
   @override
   State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
-  int nivel = 0;
+  int level = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -61,39 +63,74 @@ class _TaskState extends State<Task> {
         child: Stack(
           children: [
             Container(
-              color: Colors.blue,
               height: 140,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: Colors.blue,),
             ),
             Column(
               children: [
                 Container(
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.white,
+                  ),
                   height: 100,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        color: Colors.black26,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: Colors.black26
+                        ),
                         height: 100,
                         width: 100,
-                      ),
-                      Container(
-                        width: 180,
-                        child: Text(
-                          widget.name,
-                          style: TextStyle(fontSize: 24),
-                          overflow: TextOverflow.ellipsis
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: Image.network(widget.photo,
+                          fit: BoxFit.cover,),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            nivel++;
-                          });
-                          print(nivel);
-                        },
-                        child: Icon(Icons.arrow_drop_up),
-                        style: ElevatedButton.styleFrom(primary: Colors.blue, onPrimary: Colors.white),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 180,
+                            child: Text(
+                              widget.name,
+                              style: TextStyle(fontSize: 24),
+                              overflow: TextOverflow.ellipsis
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.star, size: 15, color: (widget.difficulty >= 1) ? Colors.blue : Colors.blue[100]),
+                              Icon(Icons.star, size: 15, color: (widget.difficulty >= 2) ? Colors.blue : Colors.blue[100]),
+                              Icon(Icons.star, size: 15, color: (widget.difficulty >= 3) ? Colors.blue : Colors.blue[100]),
+                              Icon(Icons.star, size: 15, color: (widget.difficulty >= 4) ? Colors.blue : Colors.blue[100]),
+                              Icon(Icons.star, size: 15, color: (widget.difficulty >= 5) ? Colors.blue : Colors.blue[100])
+                            ],
+                          )
+                        ],
+                      ),
+                      Container(
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              level++;
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              Icon(Icons.arrow_drop_up, size: 30),
+                              Text('UP'),
+                            ],
+                          ),
+                          style: ElevatedButton.styleFrom(primary: Colors.blue, onPrimary: Colors.white, minimumSize: Size(2, 50),),
+                        ),
                       )
                     ],
                   ),
@@ -106,14 +143,14 @@ class _TaskState extends State<Task> {
                       child: Container(
                         child: LinearProgressIndicator(
                           color: Colors.white,
-                          value: 1,
+                          value: (widget.difficulty > 0) ? (level/widget.difficulty) / 10 : 1,
                         ),
                         width: 200,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('Nível $nivel', style: TextStyle(color: Colors.white, fontSize: 16),),
+                      child: Text('Nível $level', style: TextStyle(color: Colors.white, fontSize: 16),),
                     ),
                   ],
                 ),
